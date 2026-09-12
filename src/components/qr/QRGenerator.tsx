@@ -37,8 +37,7 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
     import('qr-code-styling').then((module) => {
       const QRCodeStyling = module.default;
       const qr = new QRCodeStyling({
-        width: 300,
-        height: 300,
+        width: 1000, height: 1000,
         margin: margin,
         qrOptions: { errorCorrectionLevel: 'H' },
         imageOptions: { hideBackgroundDots: true, imageSize: 0.4, margin: 5 }
@@ -263,7 +262,7 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
               </div>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-6 pt-6">
-              <div ref={qrRef} className="rounded-lg overflow-hidden border shadow-sm flex items-center justify-center bg-white w-[300px] h-[300px]"></div>
+              <div ref={qrRef} className="rounded-lg overflow-hidden border shadow-sm flex items-center justify-center bg-white w-[300px] h-[300px] [&>canvas]:!w-full [&>canvas]:!h-full [&>svg]:!w-full [&>svg]:!h-full"></div>
               
               <div className="flex w-full gap-2">
                 {isDynamic ? (
@@ -321,5 +320,6 @@ function getContrastRatio(rgb1: any, rgb2: any) {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
 
 
