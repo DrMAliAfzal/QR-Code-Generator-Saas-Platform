@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { destinationUrl, qrType, designData } = body;
+    const { destinationUrl, qrType, designData, mode } = body;
 
     const slug = generateSlug(8);
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       data: {
         ownerId: user.id,
         orgId: org.id,
-        type: 'dynamic',
+        type: mode === 'static' ? 'static' : 'dynamic',
         qrType: qrType || 'url',
         status: 'active',
         destination: {
@@ -90,5 +90,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
+
 
 

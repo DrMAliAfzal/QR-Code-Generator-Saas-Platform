@@ -40,6 +40,7 @@ export default function QRGenerator({
   const [margin, setMargin] = useState(10);
   
   const [logoImg, setLogoImg] = useState<string | undefined>(initialData?.logo?.storageKey || undefined);
+  const [qrMode, setQrMode] = useState<'dynamic' | 'static'>(initialData?.type || 'dynamic');
   const qrRef = useRef<HTMLDivElement>(null);
   const [qrCodeStyling, setQrCodeStyling] = useState<any>(null);
   const [safetyScore, setSafetyScore] = useState<'Excellent' | 'Warning' | 'Unsafe'>('Excellent');
@@ -129,15 +130,18 @@ export default function QRGenerator({
   const handleSaveDynamic = async () => {
     setIsSaving(true);
     try {
-      const endpoint = editMode ? '/api/qr/' + qrId : '/api/qr/save';const method = editMode ? 'PUT' : 'POST';const response = await fetch(endpoint, {  method: method,  headers: { 'Content-Type': 'application/json' },  body: JSON.stringify({    destinationUrl: getPayloadData(),    qrType: activeTab,    designData: { fgColor, bgColor, margin, logoImg: logoImg || null }  })});
+      const endpoint = editMode ? '/api/qr/' + qrId : '/api/qr/save';const method = editMode ? 'PUT' : 'POST';const response = await fetch(endpoint, {  method: method,  headers: { 'Content-Type': 'application/json' },  body: JSON.stringify({
+    destinationUrl: getPayloadData(),    qrType: activeTab,    designData: { fgColor, bgColor, margin, logoImg: logoImg || null }  ,
+mode: qrMode
+})});
       const data = await response.json();
       if (data.success) {
-        const dynamicUrl = `${window.location.origin}/r/${data.slug}`;
-        qrCodeStyling.update({ data: dynamicUrl });
+        const finalUrl = qrMode === 'dynamic' ? `${window.location.origin}/r/${data.slug}` : getPayloadData();
+        qrCodeStyling.update({ data: finalUrl });
         setTimeout(() => {
-          qrCodeStyling.download({ name: 'dynamic-qr-code', extension: 'png' });
+          qrCodeStyling.download({ name: qrMode + '-qr-code', extension: 'png' });
           setIsSaving(false);
-          alert('Dynamic QR Code saved! You can view it in your dashboard.');
+          alert(qrMode === 'dynamic' ? 'Dynamic QR Code saved!' : 'Static QR Code saved (History tracked)!');
         }, 500);
       } else {
         alert(data.error || 'Failed to save');
@@ -152,7 +156,25 @@ export default function QRGenerator({
   return (
     <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl mx-auto">
       <div className="w-full lg:w-2/3 flex flex-col gap-6">
+        
+        {isDynamic && !editMode && (
+          <Card className="mb-6 bg-slate-50 border-blue-100">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-sm">QR Code Type</h3>
+                  <p className="text-xs text-slate-500">Dynamic codes track scans and can be edited. Static codes cannot be edited later.</p>
+                </div>
+                <div className="flex bg-slate-200 p-1 rounded-lg">
+                  <button type="button" onClick={() => setQrMode('dynamic')} className={`px-3 py-1.5 text-xs font-medium rounded-md ${qrMode === 'dynamic' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-600'}`}>Dynamic</button>
+                  <button type="button" onClick={() => setQrMode('static')} className={`px-3 py-1.5 text-xs font-medium rounded-md ${qrMode === 'static' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-600'}`}>Static</button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <Tabs defaultValue="content" className="w-full">
+
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="content">1. Content</TabsTrigger>
             <TabsTrigger value="design">2. Design</TabsTrigger>
@@ -324,6 +346,7 @@ function getContrastRatio(rgb1: any, rgb2: any) {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
 
 
 

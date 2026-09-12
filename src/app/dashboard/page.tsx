@@ -49,8 +49,8 @@ export default async function DashboardPage() {
                   <QrCode className="w-5 h-5 text-slate-500" />
                   {qr.qrType.toUpperCase()}
                 </CardTitle>
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
-                  Dynamic
+                <span className="text-xs {qr.type === 'static' ? 'bg-slate-100 text-slate-800' : 'bg-blue-100 text-blue-800'} px-2 py-1 rounded-full font-medium">
+                  {qr.type === 'static' ? 'Static' : 'Dynamic'}
                 </span>
               </div>
             </CardHeader>
@@ -87,6 +87,7 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 
 
 
