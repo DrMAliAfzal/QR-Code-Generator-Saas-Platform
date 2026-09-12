@@ -1,4 +1,5 @@
-﻿import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+﻿'use client';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, QrCode } from "lucide-react";
 import Link from "next/link";
@@ -31,8 +32,8 @@ export default function PricingPage() {
         "Full Template Library",
         "Priority Email Support",
       ],
-      cta: "Upgrade to Pro",
-      link: "/dashboard?upgrade=pro",
+      cta: "Join Waitlist",
+      link: "#",
       popular: true,
     },
     {
@@ -46,11 +47,18 @@ export default function PricingPage() {
         "API Access",
         "5 Team Seats",
       ],
-      cta: "Upgrade to Business",
-      link: "/dashboard?upgrade=business",
+      cta: "Join Waitlist",
+      link: "#",
       popular: false,
     }
   ];
+
+  const handleUpgradeClick = (e: React.MouseEvent, link: string) => {
+    if (link === '#') {
+      e.preventDefault();
+      alert("Premium plans are launching very soon! We are finalizing our payment gateway. Please check back in a few days.");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
@@ -108,8 +116,10 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full" variant={plan.popular ? "default" : "outline"}>
-                    <Link href={plan.link}>{plan.cta}</Link>
+                  <Button className="w-full" variant={plan.popular ? "default" : "outline"} asChild>
+                    <Link href={plan.link} onClick={(e) => handleUpgradeClick(e, plan.link)}>
+                      {plan.cta}
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>
