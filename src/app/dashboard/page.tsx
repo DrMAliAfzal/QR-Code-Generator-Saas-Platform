@@ -32,14 +32,14 @@ export default async function DashboardPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="flex flex-col justify-center items-center h-48 border-dashed bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">
-          <CardContent className="pt-6">
-            <Link href="/dashboard/create" className="flex flex-col items-center gap-2">
+        <Link href="/dashboard/create" className="block w-full h-full">
+          <Card className="flex flex-col justify-center items-center h-full min-h-[12rem] border-dashed bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">
+            <CardContent className="pt-6 flex flex-col items-center gap-2">
               <span className="text-4xl">+</span>
               <span className="font-medium">Create New</span>
-            </Link>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
 
         {qrCodes.map((qr) => (
           <Card key={qr.id} className="flex flex-col overflow-hidden">
@@ -87,6 +87,7 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 
 
 
