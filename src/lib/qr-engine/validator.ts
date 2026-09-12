@@ -53,7 +53,7 @@ export async function evaluateScanSafety(options: QrDesignOptions): Promise<Scan
     score = 'Unsafe';
   } else if (contrast < 4.5) {
     issues.push('Contrast ratio is slightly low. Consider using a darker dot color or a lighter background.');
-    score = score === 'Unsafe' ? 'Unsafe' : 'Warning';
+    score = 'Warning';
   }
 
   if (options.margin !== undefined && options.margin < 5) {
