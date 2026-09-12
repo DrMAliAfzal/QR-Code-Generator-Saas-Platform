@@ -109,7 +109,7 @@ export default function QRGenerator({
 
   const handleDownload = () => {
     if (!qrCodeStyling) return;
-    qrCodeStyling.download({ name: 'qr-code', extension: 'png' });
+    qrCodeStyling.download({ name: 'Smart-QR-Studio', extension: 'png' });
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +139,7 @@ mode: qrMode
         const finalUrl = qrMode === 'dynamic' ? `${window.location.origin}/r/${data.slug}` : getPayloadData();
         qrCodeStyling.update({ data: finalUrl });
         setTimeout(() => {
-          qrCodeStyling.download({ name: qrMode + '-qr-code', extension: 'png' });
+          qrCodeStyling.download({ name: qrMode === 'dynamic' ? 'Smart-QR-Dynamic' : 'Smart-QR-Static', extension: 'png' });
           setIsSaving(false);
           alert(qrMode === 'dynamic' ? 'Dynamic QR Code saved!' : 'Static QR Code saved (History tracked)!');
         }, 500);

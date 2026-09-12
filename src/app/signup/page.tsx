@@ -31,7 +31,13 @@ export default function SignupPage() {
     });
     
     if (error) {
-      setError(error.message);
+      let friendlyError = error.message;
+      if (friendlyError.toLowerCase().includes('email')) {
+        friendlyError = 'Please enter a valid email address.';
+      } else if (friendlyError.toLowerCase().includes('password')) {
+        friendlyError = 'Your password is too weak. Please use at least 6 characters.';
+      }
+      setError(friendlyError);
       setLoading(false);
     } else if (data.session === null) { setError('Please check your email to verify your account.'); setLoading(false); } else { router.push('/dashboard'); }
   };
