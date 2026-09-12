@@ -25,7 +25,7 @@ export default function SignupPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -33,9 +33,7 @@ export default function SignupPage() {
     if (error) {
       setError(error.message);
       setLoading(false);
-    } else {
-      router.push('/dashboard');
-    }
+    } else if (data.session === null) { setError('Please check your email to verify your account.'); setLoading(false); } else { router.push('/dashboard'); }
   };
 
   return (
@@ -68,5 +66,6 @@ export default function SignupPage() {
     </div>
   );
 }
+
 
 
