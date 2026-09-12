@@ -1,4 +1,5 @@
-﻿import QRGenerator from '@/components/qr/QRGenerator';
+﻿import Link from 'next/link';
+import QRGenerator from '@/components/qr/QRGenerator';
 
 export const metadata = {
   title: 'WhatsApp QR Code Generator | Free & Instant',
@@ -9,7 +10,7 @@ export default function WhatsAppQrCodePage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b py-4 px-6 md:px-12 flex justify-between items-center">
-        <a href="/" className="font-bold text-xl text-slate-900">Simple QR Code Generator</a>
+        <Link href="/" className="font-bold text-xl text-slate-900">Simple QR Code Generator</Link>
       </header>
       <main className="flex-1 py-12 px-4 md:px-8">
         <div className="text-center mb-12 max-w-2xl mx-auto">
@@ -21,3 +22,4 @@ export default function WhatsAppQrCodePage() {
     </div>
   );
 }
+

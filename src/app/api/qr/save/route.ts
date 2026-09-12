@@ -1,4 +1,4 @@
-﻿import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
@@ -89,8 +89,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, slug: slug, qrCode });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error saving QR code:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }

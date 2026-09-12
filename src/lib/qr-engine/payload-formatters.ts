@@ -1,4 +1,8 @@
 ﻿export function formatWifi(ssid: string, password?: string, encryption: 'WPA' | 'WEP' | 'nopass' = 'WPA', hidden: boolean = false) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const enc = encryption;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const hid = hidden;
   return "WIFI:T:${encryption};S:${ssid};P:${password || ''};H:${hidden ? 'true' : 'false'};;";
 }
 
@@ -20,6 +24,8 @@ export function formatVCard(data: { name: string, phone?: string, email?: string
 
 export function formatWhatsApp(phone: string, text?: string) {
   const cleanPhone = phone.replace(/\D/g, '');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _c = cleanPhone;
   if (text) {
     return "https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}";
   }

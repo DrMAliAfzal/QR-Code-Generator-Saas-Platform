@@ -1,4 +1,5 @@
-﻿import QRGenerator from '@/components/qr/QRGenerator';
+﻿import Link from 'next/link';
+import QRGenerator from '@/components/qr/QRGenerator';
 
 export const metadata = {
   title: 'Wi-Fi QR Code Generator | Free & Instant',
@@ -9,10 +10,10 @@ export default function WifiQrCodePage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b py-4 px-6 md:px-12 flex justify-between items-center">
-        <a href="/" className="font-bold text-xl text-slate-900">Simple QR Code Generator</a>
+        <Link href="/" className="font-bold text-xl text-slate-900">Simple QR Code Generator</Link>
         <div className="flex gap-4 items-center">
-          <a href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium">Log in</a>
-          <a href="/signup" className="text-sm bg-slate-900 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-800">Sign up</a>
+          <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium">Log in</Link>
+          <Link href="/signup" className="text-sm bg-slate-900 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-800">Sign up</Link>
         </div>
       </header>
       <main className="flex-1 py-12 px-4 md:px-8">
@@ -29,3 +30,4 @@ export default function WifiQrCodePage() {
     </div>
   );
 }
+

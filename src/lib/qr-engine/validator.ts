@@ -77,7 +77,7 @@ export async function evaluateScanSafety(options: QrDesignOptions): Promise<Scan
       issues.push('The generated QR code completely fails to decode in our scanner simulation. Do not print this code.');
       score = 'Unsafe';
     }
-  } catch (error) {
+  } catch {
     issues.push('Failed to run decode simulation on the generated image.');
     score = 'Unsafe';
   }

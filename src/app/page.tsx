@@ -1,4 +1,5 @@
-﻿import QRGenerator from '@/components/qr/QRGenerator';
+﻿import Link from 'next/link';
+import QRGenerator from '@/components/qr/QRGenerator';
 
 export const metadata = {
   title: 'Free QR Code Generator | Simple & Secure',
@@ -11,8 +12,8 @@ export default function Home() {
       <header className="bg-white border-b py-4 px-6 md:px-12 flex justify-between items-center">
         <div className="font-bold text-xl text-slate-900">Simple QR Code Generator</div>
         <div className="flex gap-4 items-center">
-          <a href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium">Log in</a>
-          <a href="/signup" className="text-sm bg-slate-900 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-800">Sign up</a>
+          <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium">Log in</Link>
+          <Link href="/signup" className="text-sm bg-slate-900 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-800">Sign up</Link>
         </div>
       </header>
       
@@ -26,7 +27,7 @@ export default function Home() {
         
         <section className="mt-24 max-w-4xl mx-auto prose prose-slate px-4">
           <h2 className="text-2xl font-bold">Why use our Simple QR Code Generator?</h2>
-          <p className="mt-2 text-slate-600">Unlike other tools, our generator creates your static QR codes entirely inside your browser. This means your URLs, Wi-Fi passwords, and contact details are never sent to our servers. It's 100% private and instantly fast.</p>
+          <p className="mt-2 text-slate-600">Unlike other tools, our generator creates your static QR codes entirely inside your browser. This means your URLs, Wi-Fi passwords, and contact details are never sent to our servers. It&apos;s 100% private and instantly fast.</p>
           
           <h3 className="text-xl font-bold mt-8">Static vs Dynamic QR Codes</h3>
           <p className="mt-2 text-slate-600"><strong>Static QR Codes (Free)</strong> encode your data directly into the pattern. They are permanent and can never be changed once printed.</p>
@@ -36,3 +37,4 @@ export default function Home() {
     </div>
   );
 }
+
