@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { QrCode, ExternalLink } from 'lucide-react';
+import QRPreview from '@/components/qr/QRPreview';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
 
   const qrCodes = await prisma.qrCode.findMany({
     where: { ownerId: user.id },
-    include: { destination: true, _count: { select: { scans: true } } },
+    include: { destination: true, design: true, _count: { select: { scans: true } } },
     orderBy: { createdAt: 'desc' }
   });
 
@@ -53,6 +54,11 @@ export default async function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="pt-4 flex-1 flex flex-col gap-4">
+              <div className="w-full flex justify-center mb-2">
+                <div className="w-32 h-32">
+                  <QRPreview data={"https://qr-code-generator-saas-platform.vercel.app/r/" + qr.destination?.slug} fgColor={qr.design?.fgColor} bgColor={qr.design?.bgColor} />
+                </div>
+              </div>
               <div>
                 <p className="text-sm text-slate-500 mb-1">Destination</p>
                 <a href={qr.destination?.destinationUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-blue-600 hover:underline flex items-center gap-1 break-all line-clamp-2">
@@ -77,4 +83,5 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 
