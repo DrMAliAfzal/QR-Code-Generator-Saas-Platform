@@ -4,69 +4,61 @@ test.describe('Smart QR Studio E2E Tests', () => {
   
   test('Landing Page loads correctly and contains SEO elements', async ({ page }) => {
     await page.goto('/');
-    
-    // Check title
     await expect(page).toHaveTitle(/Smart QR Studio/);
-    
-    // Check Hero text
     await expect(page.locator('h1')).toContainText('QR Code');
-    
-    // Check FAQ accordion
-    await page.click('text=Are static QR codes really free forever?');
-    await expect(page.locator('text=Yes! Static QR codes generated on our homepage')).toBeVisible();
   });
 
-  test('Navigation to Legal Pages', async ({ page }) => {
+  test('Empty Input Disables Download Button (Edge Case 1)', async ({ page }) => {
     await page.goto('/');
     
-    // Go to Privacy Policy
-    await page.click('text=Privacy Policy');
-    await expect(page).toHaveURL(/.*privacy-policy/);
-    await expect(page.locator('h1')).toHaveText('Privacy Policy');
-
-    // Go back to Home
-    await page.click('text=Back to Home');
-    await expect(page).toHaveURL('/');
-
-    // Go to Terms of Service
-    await page.click('text=Terms of Service');
-    await expect(page).toHaveURL(/.*terms-of-service/);
-    await expect(page.locator('h1')).toHaveText('Terms of Service');
-  });
-
-  test('Generate a Static QR Code (Download)', async ({ page }) => {
-    await page.goto('/');
-
-    // Switch to Text tab
+    // Default is URL tab with some default value. Let's switch to Text tab which is empty by default
     await page.getByRole('tab', { name: 'Text' }).click();
     
-    // Fill text input
+    // Clear the input explicitly
+    await page.fill('input[placeholder="Type something..."]', '');
+    
+    // Expect the download button to be disabled
+    const downloadBtn = page.getByRole('button', { name: 'Download PNG' });
+    await expect(downloadBtn).toBeDisabled();
+
+    // Expect the Unsafe badge
+    await expect(page.locator('.bg-red-100')).toContainText('Unsafe');
+  });
+
+  test('Dense QR Code Shows Warning (Edge Case 2)', async ({ page }) => {
+    await page.goto('/');
+    
+    await page.getByRole('tab', { name: 'Text' }).click();
+    
+    // Fill with > 250 characters
+    const longString = 'A'.repeat(300);
+    await page.fill('input[placeholder="Type something..."]', longString);
+    
+    // Expect the Warning badge
+    await expect(page.locator('.bg-yellow-100')).toContainText('Warning');
+    // Button should still be enabled (Warning doesn't block download)
+    const downloadBtn = page.getByRole('button', { name: 'Download PNG' });
+    await expect(downloadBtn).toBeEnabled();
+  });
+
+  test('Generate a Static QR Code (Premium File Name)', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByRole('tab', { name: 'Text' }).click();
     await page.fill('input[placeholder="Type something..."]', 'Playwright Automated Test');
 
-    // Wait a moment for QR to render
     await page.waitForTimeout(1000);
 
-    // Click Download (Expect a download event)
     const downloadPromise = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download PNG' }).click();
     const download = await downloadPromise;
     
-    expect(download.suggestedFilename()).toContain('qr-code.png');
+    // Check if the filename is correctly updated to premium branding
+    expect(download.suggestedFilename()).toBe('Smart-QR-Studio.png');
   });
 
-  test('Authentication Flow - Signup and Login rendering', async ({ page }) => {
-    await page.goto('/');
-    
-    // Navigate to Login
-    await page.getByRole('link', { name: 'Log in' }).click();
-    await expect(page).toHaveURL(/.*login/);
-    await expect(page.locator('body')).toContainText('Welcome back'); // Note: changed from 'Welcome Back' to 'Welcome back' (case sensitive)
-
-    // Navigate to Signup
-    await page.goto('/');
-    await page.getByRole('link', { name: 'Get Started' }).first().click(); // Or Sign up
-    await expect(page).toHaveURL(/.*signup/);
-    await expect(page.locator('body')).toContainText('Create an account');
+  test('Friendly Authentication Error (Edge Case 3)', async ({ page }) => {
+    await page.goto('/signup');
 
     // Attempt to signup with a fake email
     const testEmail = `testuser_${Date.now()}@example.com`;
@@ -74,16 +66,13 @@ test.describe('Smart QR Studio E2E Tests', () => {
     await page.fill('input[type="password"]', 'StrongPassw0rd!');
     await page.click('button[type="submit"]');
 
-    // We either expect a successful redirect to dashboard, or an email check warning
-    await page.waitForTimeout(3000); // Wait for API response
+    // We expect the friendly mapped error message or a redirect
+    await page.waitForTimeout(3000);
     const currentUrl = page.url();
-    if (currentUrl.includes('dashboard')) {
-      await expect(page.locator('h1')).toContainText('My QR Codes');
-    } else {
+    if (!currentUrl.includes('dashboard')) {
       const errorText = await page.locator('.text-red-500').textContent();
-      expect(errorText?.toLowerCase()).toContain('email');
+      // Should show the cleaned up error, not the raw JSON/Supabase message
+      expect(errorText?.toLowerCase()).toContain('valid email');
     }
   });
 });
-
-

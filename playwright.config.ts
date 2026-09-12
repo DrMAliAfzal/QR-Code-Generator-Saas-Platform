@@ -8,7 +8,7 @@ export default defineConfig({
   workers: 1,
   reporter: [['html'], ['json', { outputFile: 'test-results/test-results.json' }]],
   use: {
-    baseURL: 'https://qr-code-generator-saas-platform-al-afzal-solution.vercel.app',
+    baseURL: 'http://localhost:3000',
     trace: 'on',
     video: 'on',
   },
@@ -19,3 +19,4 @@ export default defineConfig({
     },
   ],
 });
+

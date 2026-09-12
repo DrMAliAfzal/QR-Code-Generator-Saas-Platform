@@ -30,6 +30,7 @@ model Organization {
   planId      String?
   createdAt   DateTime  @default(now())
 
+  stripeCustomerId String?
   owner       User      @relation("OrgOwner", fields: [ownerId], references: [id])
   teamMembers TeamMember[]
   qrCodes     QrCode[]
@@ -142,6 +143,13 @@ model Plan {
   price        Float
   qrLimit      Int
   scanLimit    Int
+  dynamicQrLimit Int     @default(5)
+  analyticsDays  Int     @default(30)
+  bulkEnabled    Boolean @default(false)
+  apiEnabled     Boolean @default(false)
+  teamSeats      Int     @default(1)
+  customDomainEnabled Boolean @default(false)
+  showAds        Boolean @default(true)
   featuresJson Json
 }
 
