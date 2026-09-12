@@ -116,11 +116,11 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full" variant={plan.popular ? "default" : "outline"} asChild>
-                    <Link href={plan.link} onClick={(e) => handleUpgradeClick(e, plan.link)}>
-                      {plan.cta}
-                    </Link>
+                  <Link href={plan.link} onClick={(e) => handleUpgradeClick(e, plan.link)} className="w-full block">
+                  <Button className="w-full" variant={plan.popular ? "default" : "outline"}>
+                    {plan.cta}
                   </Button>
+                </Link>
                 </CardFooter>
               </Card>
             ))}
@@ -135,3 +135,4 @@ export default function PricingPage() {
     </div>
   );
 }
+
