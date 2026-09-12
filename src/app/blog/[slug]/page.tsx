@@ -17,8 +17,35 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     notFound();
   }
 
+  const title = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    datePublished: '2026-09-12T08:00:00+08:00',
+    dateModified: '2026-09-12T08:00:00+08:00',
+    author: [{
+      '@type': 'Organization',
+      name: 'Al-Afzal Solutions',
+      url: 'https://qr-code-generator-saas-platform-al-afzal-solution.vercel.app'
+    }],
+    publisher: {
+      '@type': 'Organization',
+      name: 'Smart QR Studio',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://qr-code-generator-saas-platform-al-afzal-solution.vercel.app/favicon.ico'
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
