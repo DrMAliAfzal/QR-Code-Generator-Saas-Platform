@@ -14,20 +14,32 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { formatWifi, formatVCard, formatWhatsApp } from '@/lib/qr-engine/payload-formatters';
 
-export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: { isDynamic?: boolean, defaultTab?: string }) {
-  const [activeTab, setActiveTab] = useState(defaultTab);
+export default function QRGenerator({ 
+  isDynamic = false, 
+  defaultTab = 'url',
+  editMode = false,
+  qrId = '',
+  initialData = null 
+}: { 
+  isDynamic?: boolean, 
+  defaultTab?: string,
+  editMode?: boolean,
+  qrId?: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialData?: any 
+}) {
+  const [activeTab, setActiveTab] = useState(initialData?.qrType || defaultTab);
   
-  const [url, setUrl] = useState('https://example.com');
+  const [url, setUrl] = useState(initialData?.destination?.destinationUrl || 'https://example.com');
   const [text, setText] = useState('Hello World');
   const [wifiSsid, setWifiSsid] = useState('');
   const [wifiPass, setWifiPass] = useState('');
   
-  const [fgColor, setFgColor] = useState('#000000');
-  const [bgColor, setBgColor] = useState('#ffffff');
+  const [fgColor, setFgColor] = useState(initialData?.design?.fgColor || '#000000');
+  const [bgColor, setBgColor] = useState(initialData?.design?.bgColor || '#ffffff');
   const [margin, setMargin] = useState(10);
   
-  const [logoImg, setLogoImg] = useState<string | undefined>();
-  
+  const [logoImg, setLogoImg] = useState<string | undefined>(initialData?.logo?.storageKey || undefined);
   const qrRef = useRef<HTMLDivElement>(null);
   const [qrCodeStyling, setQrCodeStyling] = useState<any>(null);
   const [safetyScore, setSafetyScore] = useState<'Excellent' | 'Warning' | 'Unsafe'>('Excellent');
@@ -117,15 +129,7 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
   const handleSaveDynamic = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch('/api/qr/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          destinationUrl: getPayloadData(),
-          qrType: activeTab,
-          designData: { fgColor, bgColor, margin, logoImg }
-        })
-      });
+      const endpoint = editMode ? '/api/qr/' + qrId : '/api/qr/save';const method = editMode ? 'PUT' : 'POST';const response = await fetch(endpoint, {  method: method,  headers: { 'Content-Type': 'application/json' },  body: JSON.stringify({    destinationUrl: getPayloadData(),    qrType: activeTab,    designData: { fgColor, bgColor, margin, logoImg: logoImg || null }  })});
       const data = await response.json();
       if (data.success) {
         const dynamicUrl = `${window.location.origin}/r/${data.slug}`;
@@ -266,8 +270,8 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
               
               <div className="flex w-full gap-2">
                 {isDynamic ? (
-                  <Button className="w-full" size="lg" onClick={handleSaveDynamic} disabled={safetyScore === 'Unsafe' || isSaving}>
-                    {isSaving ? 'Saving...' : 'Save & Download'}
+                                                      <Button className="w-full" size="lg" onClick={handleSaveDynamic} disabled={safetyScore === 'Unsafe' || isSaving}>
+                    {isSaving ? 'Saving...' : (editMode ? 'Update & Download' : 'Save & Download')}
                   </Button>
                 ) : (
                   <Button className="w-full" size="lg" onClick={handleDownload} disabled={safetyScore === 'Unsafe'}>
@@ -320,6 +324,10 @@ function getContrastRatio(rgb1: any, rgb2: any) {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
+
+
+
 
 
 

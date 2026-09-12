@@ -67,9 +67,12 @@ export default function QRCardActions({ id, currentUrl }: { id: string, currentU
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-wrap">
       <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} disabled={isDeleting} className="h-8 text-slate-600">
         <Pencil className="w-3.5 h-3.5 mr-1" /> Edit Link
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => router.push('/dashboard/edit/' + id)} disabled={isDeleting} className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+        <Pencil className="w-3.5 h-3.5 mr-1" /> Edit Design
       </Button>
       <Button variant="outline" size="sm" onClick={handleDelete} disabled={isDeleting} className="h-8 text-red-600 hover:text-red-700 hover:bg-red-50">
         <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
@@ -77,4 +80,5 @@ export default function QRCardActions({ id, currentUrl }: { id: string, currentU
     </div>
   );
 }
+
 
