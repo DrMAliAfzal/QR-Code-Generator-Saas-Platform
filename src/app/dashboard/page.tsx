@@ -6,6 +6,7 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { QrCode, ExternalLink } from 'lucide-react';
 import QRPreview from '@/components/qr/QRPreview';
+import QRCardActions from '@/components/QRCardActions';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -65,6 +66,9 @@ export default async function DashboardPage() {
                   {qr.destination?.destinationUrl}
                   <ExternalLink className="w-3 h-3 flex-shrink-0" />
                 </a>
+                <div className="mt-3">
+                  <QRCardActions id={qr.id} currentUrl={qr.destination?.destinationUrl || ''} />
+                </div>
               </div>
               <div className="mt-auto pt-4 border-t flex justify-between items-center">
                 <div>
@@ -83,6 +87,7 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 
 
 
