@@ -177,12 +177,13 @@ export default function Home() {
             © {new Date().getFullYear()} Smart QR Studio. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="#" className="text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
-            <Link href="#" className="text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
+            <Link href="/privacy-policy" className="text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
 
