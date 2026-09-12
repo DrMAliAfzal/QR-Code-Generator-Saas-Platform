@@ -4,14 +4,16 @@ import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const generateMetadata = ({ params }: { params: { slug: string } }) => {
+export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
   return {
-    title: `${params.slug.replace(/-/g, ' ')} | Smart QR Studio`,
+    title: `${slug.replace(/-/g, ' ')} | Smart QR Studio`,
   };
 };
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  if (params.slug !== 'dynamic-vs-static-qr-codes' && params.slug !== 'restaurant-menu-qr-code') {
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  if (slug !== 'dynamic-vs-static-qr-codes' && slug !== 'restaurant-menu-qr-code') {
     notFound();
   }
 
@@ -37,7 +39,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
       
       <main className="flex-1 py-16">
         <article className="container mx-auto px-4 max-w-3xl prose lg:prose-lg bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-          <h1 className="capitalize font-bold text-4xl mb-4">{params.slug.replace(/-/g, ' ')}</h1>
+          <h1 className="capitalize font-bold text-4xl mb-4">{slug.replace(/-/g, ' ')}</h1>
           <p className="text-slate-500 mb-8">Published on September 12, 2026</p>
           
           <AdUnit slotId="top-content-slot" />
