@@ -17,7 +17,7 @@ export default async function DashboardPage() {
 
   const qrCodes = await prisma.qrCode.findMany({
     where: { ownerId: user.id },
-    include: { destination: true, design: true, _count: { select: { scans: true } } },
+    include: { destination: true, design: true, logo: true, _count: { select: { scans: true } } },
     orderBy: { createdAt: 'desc' }
   });
 
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
             <CardContent className="pt-4 flex-1 flex flex-col gap-4">
               <div className="w-full flex justify-center mb-2">
                 <div className="w-32 h-32">
-                  <QRPreview data={"https://qr-code-generator-saas-platform.vercel.app/r/" + qr.destination?.slug} fgColor={qr.design?.fgColor} bgColor={qr.design?.bgColor} />
+                  <QRPreview data={"https://qr-code-generator-saas-platform.vercel.app/r/" + qr.destination?.slug} fgColor={qr.design?.fgColor} bgColor={qr.design?.bgColor} logoImg={qr.logo?.storageKey} />
                 </div>
               </div>
               <div>
@@ -83,5 +83,6 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
 
 

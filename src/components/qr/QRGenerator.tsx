@@ -123,7 +123,7 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
         body: JSON.stringify({
           destinationUrl: getPayloadData(),
           qrType: activeTab,
-          designData: { fgColor, bgColor, margin }
+          designData: { fgColor, bgColor, margin, logoImg }
         })
       });
       const data = await response.json();
@@ -320,6 +320,7 @@ function getContrastRatio(rgb1: any, rgb2: any) {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
 
 
 

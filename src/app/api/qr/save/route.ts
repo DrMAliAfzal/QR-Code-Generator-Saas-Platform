@@ -64,16 +64,23 @@ export async function POST(req: NextRequest) {
             isActive: true,
           }
         },
-        design: {
+                design: {
           create: {
             fgColor: designData?.fgColor || '#000000',
             bgColor: designData?.bgColor || '#ffffff',
           }
-        }
+        },
+        ...(designData?.logoImg ? {
+          logo: {
+            create: {
+              storageKey: designData.logoImg,
+            }
+          }
+        } : {})
       },
       include: {
         destination: true,
-        design: true
+        design: true, logo: true
       }
     });
 
@@ -83,4 +90,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
+
 

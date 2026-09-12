@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "../ui/button";
 
-export default function QRPreview({ data, fgColor = "#000000", bgColor = "#ffffff" }: { data: string, fgColor?: string, bgColor?: string }) {
+export default function QRPreview({ data, fgColor = "#000000", bgColor = "#ffffff", logoImg }: { data: string, fgColor?: string, bgColor?: string, logoImg?: string }) {
   const qrRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [qrCodeStyling, setQrCodeStyling] = useState<any>(null);
@@ -20,6 +20,7 @@ export default function QRPreview({ data, fgColor = "#000000", bgColor = "#fffff
         imageOptions: { hideBackgroundDots: true, imageSize: 0.4, margin: 5 },
         dotsOptions: { color: fgColor, type: 'square' },
         backgroundOptions: { color: bgColor },
+        image: logoImg,
       });
       
       setQrCodeStyling(qr);
@@ -29,7 +30,7 @@ export default function QRPreview({ data, fgColor = "#000000", bgColor = "#fffff
         qr.append(qrRef.current);
       }
     });
-  }, [data, fgColor, bgColor]);
+  }, [data, fgColor, bgColor, logoImg]);
 
   const handleDownload = () => {
     if (qrCodeStyling) {
@@ -48,3 +49,4 @@ export default function QRPreview({ data, fgColor = "#000000", bgColor = "#fffff
     </div>
   );
 }
+
