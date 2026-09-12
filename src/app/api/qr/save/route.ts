@@ -1,5 +1,5 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+﻿import { NextResponse, NextRequest } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 
@@ -15,18 +15,7 @@ function generateSlug(length = 8) {
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-        },
-      }
-    );
+    const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -94,3 +83,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
+
