@@ -64,7 +64,7 @@ export async function evaluateScanSafety(options: QrDesignOptions): Promise<Scan
   if (options.image) {
     const logoSize = options.imageOptions?.imageSize || 0.4;
     if (logoSize > 0.3) {
-      issues.push(Logo covers % of the QR code. We recommend keeping it under 30% to prevent covering critical data.);
+      issues.push(`Logo covers ${Math.round(logoSize * 100)}% of the QR code. We recommend keeping it under 30% to prevent covering critical data.`);
       score = 'Warning'; 
     }
   }
