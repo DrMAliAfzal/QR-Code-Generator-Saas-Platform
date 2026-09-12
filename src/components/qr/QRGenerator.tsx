@@ -76,6 +76,14 @@ export default function QRGenerator({
     
     const issues: string[] = [];
     let score: 'Excellent' | 'Warning' | 'Unsafe' = 'Excellent';
+      const payload = getPayloadData();
+      if (!payload || payload.trim() === '') {
+        issues.push('Content is empty. Please enter a URL or text.');
+        score = 'Unsafe';
+      } else if (payload.length > 250) {
+        issues.push('Content is very long. The QR code will be dense and hard to scan.');
+        score = 'Warning';
+      }
     
     const fgRgb = hexToRgb(fgColor);
     const bgRgb = hexToRgb(bgColor);
@@ -346,6 +354,7 @@ function getContrastRatio(rgb1: any, rgb2: any) {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
 
 
 
