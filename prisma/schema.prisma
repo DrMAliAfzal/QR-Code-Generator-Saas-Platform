@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String?
+  createdAt     DateTime  @default(now())
+  mfaEnabled    Boolean   @default(false)
+  deletedAt     DateTime?
+
+  organizations Organization[] @relation("OrgOwner")
+  teamMembers   TeamMember[]
+  qrCodes       QrCode[]
+  notifications Notification[]
+}
+
+model Organization {
+  id          String    @id @default(uuid())
+  name        String
+  ownerId     String
+  planId      String?
+  createdAt   DateTime  @default(now())
+
+  owner       User      @relation("OrgOwner", fields: [ownerId], references: [id])
+  teamMembers TeamMember[]
+  qrCodes     QrCode[]
+  subscriptions Subscription[]
+  payments    Payment[]
+  apiKeys     ApiKey[]
+  auditLogs   AuditLog[]
+  domains     Domain[]
+}
+
+model TeamMember {
+  id          String    @id @default(uuid())
+  orgId       String
+  userId      String
+  role        String
+  invitedAt   DateTime?
+  joinedAt    DateTime?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model QrCode {
+  id          String    @id @default(uuid())
+  orgId       String
+  ownerId     String
+  type        String    // 'static' | 'dynamic'
+  qrType      String    // 'url', 'text', 'wifi', 'vcard', etc.
+  status      String    @default("active") // 'active', 'paused', 'expired'
+  createdAt   DateTime  @default(now())
+  expiryAt    DateTime?
+  deletedAt   DateTime?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  destination  QrDestination?
+  design       QrDesign?
+  logo         QrLogo?
+  scans        QrScan[]
+}
+
+model QrDestination {
+  id             String    @id @default(uuid())
+  qrCodeId       String    @unique
+  destinationUrl String
+  slug           String    @unique
+  passwordHash   String?
+  isActive       Boolean   @default(true)
+  updatedAt      DateTime  @updatedAt
+
+  qrCode         QrCode    @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+}
+
+model QrDesign {
+  id                     String    @id @default(uuid())
+  qrCodeId               String    @unique
+  fgColor                String    @default("#000000")
+  bgColor                String    @default("#ffffff")
+  dotStyle               String    @default("square")
+  eyeStyle               String    @default("square")
+  frameStyle             String?
+  errorCorrectionLevel   String    @default("L") // 'L', 'M', 'Q', 'H'
+  quietZone              Boolean   @default(true)
+  ctaText                String?
+
+  qrCode                 QrCode    @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+}
+
+model QrLogo {
+  id          String    @id @default(uuid())
+  qrCodeId    String    @unique
+  storageKey  String
+  widthPct    Float     @default(0.2)
+  shape       String    @default("square")
+  updatedAt   DateTime  @updatedAt
+
+  qrCode      QrCode    @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+}
+
+model QrTemplate {
+  id          String    @id @default(uuid())
+  name        String
+  category    String
+  designJson  Json
+  isPublic    Boolean   @default(false)
+}
+
+model QrScan {
+  id          String    @id @default(uuid())
+  qrCodeId    String
+  scannedAt   DateTime  @default(now())
+  deviceType  String?
+  os          String?
+  browser     String?
+  country     String?
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  qrCode      QrCode    @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+
+  @@index([qrCodeId, scannedAt])
+}
+
+model Plan {
+  id           String    @id @default(uuid())
+  name         String
+  price        Float
+  qrLimit      Int
+  scanLimit    Int
+  featuresJson Json
+}
+
+model Subscription {
+  id                   String    @id @default(uuid())
+  orgId                String
+  planId               String
+  status               String
+  currentPeriodEnd     DateTime?
+  stripeSubscriptionId String?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id              String    @id @default(uuid())
+  orgId           String
+  amount          Float
+  currency        String
+  status          String
+  stripePaymentId String?
+  createdAt       DateTime  @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  orgId       String
+  keyHash     String
+  scopes      String[]
+  rateLimit   Int       @default(100)
+  createdAt   DateTime  @default(now())
+  revokedAt   DateTime?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  orgId       String
+  actorId     String
+  action      String
+  target      String
+  createdAt   DateTime  @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model Domain {
+  id           String    @id @default(uuid())
+  orgId        String
+  customDomain String    @unique
+  verified     Boolean   @default(false)
+  sslStatus    String?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  userId      String
+  type        String
+  payloadJson Json
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
