@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server';
+﻿import { NextResponse, NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
@@ -15,7 +15,7 @@ function generateSlug(length = 8) {
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -33,6 +33,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    await prisma.user.upsert({
+      where: { id: user.id },
+      update: {},
+      create: {
+        id: user.id,
+        email: user.email || '',
+        name: user.email?.split('@')[0] || 'User',
+      }
+    });
+
+    let org = await prisma.organization.findFirst({
+      where: { ownerId: user.id }
+    });
+
+    if (!org) {
+      org = await prisma.organization.create({
+        data: {
+          name: 'My Workspace',
+          ownerId: user.id
+        }
+      });
+    }
+
     const body = await req.json();
     const { destinationUrl, qrType, designData } = body;
 
@@ -40,22 +63,28 @@ export async function POST(req: NextRequest) {
 
     const qrCode = await prisma.qrCode.create({
       data: {
-        userId: user.id,
-        name: `Dynamic QR - ${new Date().toLocaleDateString()}`,
+        ownerId: user.id,
+        orgId: org.id,
+        type: 'dynamic',
+        qrType: qrType || 'url',
         status: 'active',
-        isDynamic: true,
-        designData: designData || {},
-        qrDestinations: {
+        destination: {
           create: {
             destinationUrl: destinationUrl || 'https://example.com',
-            type: qrType || 'url',
             slug: slug,
             isActive: true,
+          }
+        },
+        design: {
+          create: {
+            fgColor: designData?.fgColor || '#000000',
+            bgColor: designData?.bgColor || '#ffffff',
           }
         }
       },
       include: {
-        qrDestinations: true
+        destination: true,
+        design: true
       }
     });
 
