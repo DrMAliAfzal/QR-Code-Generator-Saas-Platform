@@ -109,6 +109,39 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
     }
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveDynamic = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/qr/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destinationUrl: getPayloadData(),
+          qrType: activeTab,
+          designData: { fgColor, bgColor, margin }
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        const dynamicUrl = `${window.location.origin}/r/${data.slug}`;
+        qrCodeStyling.update({ data: dynamicUrl });
+        setTimeout(() => {
+          qrCodeStyling.download({ name: 'dynamic-qr-code', extension: 'png' });
+          setIsSaving(false);
+          alert('Dynamic QR Code saved! You can view it in your dashboard.');
+        }, 500);
+      } else {
+        alert(data.error || 'Failed to save');
+        setIsSaving(false);
+      }
+    } catch (e) {
+      alert('Network error');
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl mx-auto">
       <div className="w-full lg:w-2/3 flex flex-col gap-6">
@@ -229,9 +262,15 @@ export default function QRGenerator({ isDynamic = false, defaultTab = 'url' }: {
               <div ref={qrRef} className="rounded-lg overflow-hidden border shadow-sm flex items-center justify-center bg-white w-[300px] h-[300px]"></div>
               
               <div className="flex w-full gap-2">
-                <Button className="w-full" size="lg" onClick={handleDownload} disabled={safetyScore === 'Unsafe'}>
-                  Download PNG
-                </Button>
+                {isDynamic ? (
+                  <Button className="w-full" size="lg" onClick={handleSaveDynamic} disabled={safetyScore === 'Unsafe' || isSaving}>
+                    {isSaving ? 'Saving...' : 'Save & Download'}
+                  </Button>
+                ) : (
+                  <Button className="w-full" size="lg" onClick={handleDownload} disabled={safetyScore === 'Unsafe'}>
+                    Download PNG
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

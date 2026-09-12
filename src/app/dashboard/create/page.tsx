@@ -1,122 +1,17 @@
-"use client";
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+﻿import QRGenerator from '@/components/qr/QRGenerator';
 
-export default function CreateQrPage() {
-  const [data, setData] = useState("https://example.com");
-  const [fgColor, setFgColor] = useState("#000000");
-  const [bgColor, setBgColor] = useState("#ffffff");
+export const metadata = {
+  title: 'Create Dynamic QR Code | Simple QR Code Generator',
+};
 
+export default function CreateDynamicQrPage() {
   return (
-    <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
-      <div className="w-full lg:w-2/3 flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Create New QR Code</h1>
-          <p className="text-slate-500">Customize your QR code design, add a logo, and ensure it's safe to scan.</p>
-        </div>
-
-        <Tabs defaultValue="content" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="content">1. Content</TabsTrigger>
-            <TabsTrigger value="design">2. Design</TabsTrigger>
-            <TabsTrigger value="logo">3. Logo</TabsTrigger>
-          </TabsList>
-          <TabsContent value="content" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Destination</CardTitle>
-                <CardDescription>Enter the URL or text for your QR code.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="url">URL or Text</Label>
-                  <Input 
-                    id="url" 
-                    value={data} 
-                    onChange={(e) => setData(e.target.value)} 
-                    placeholder="https://your-website.com" 
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="design" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Colors & Shapes</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Pattern Color</Label>
-                    <div className="flex gap-2">
-                      <Input type="color" value={fgColor} onChange={(e) => setFgColor(e.target.value)} className="w-12 p-1 h-10" />
-                      <Input type="text" value={fgColor} onChange={(e) => setFgColor(e.target.value)} className="flex-1" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Background Color</Label>
-                    <div className="flex gap-2">
-                      <Input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="w-12 p-1 h-10" />
-                      <Input type="text" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="flex-1" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="logo" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Logo</CardTitle>
-                <CardDescription>Upload a logo to place in the center.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                 <Input type="file" accept="image/png, image/jpeg" />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+    <div className="max-w-6xl mx-auto flex flex-col gap-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Create Dynamic QR Code</h1>
+        <p className="text-slate-500">Dynamic QR codes can be edited anytime and tracked in your dashboard.</p>
       </div>
-
-      <div className="w-full lg:w-1/3">
-        <div className="sticky top-12 flex flex-col gap-6">
-          <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Live Preview</CardTitle>
-                <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100">
-                  Excellent
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center gap-6">
-              <div 
-                className="w-full aspect-square bg-slate-100 rounded-lg flex items-center justify-center border overflow-hidden"
-                style={{ backgroundColor: bgColor }}
-              >
-                <div className="w-48 h-48 border-4 border-dashed rounded-lg flex items-center justify-center text-sm font-medium opacity-50" style={{ borderColor: fgColor, color: fgColor }}>
-                  QR Preview
-                </div>
-              </div>
-              <Button className="w-full" size="lg">Generate & Download</Button>
-            </CardContent>
-          </Card>
-          
-          <Alert>
-            <AlertTitle className="font-semibold text-green-700">Scan Safety Score: Excellent</AlertTitle>
-            <AlertDescription className="text-sm text-slate-600 mt-2">
-              Contrast ratio is good. Margins are clear. This QR code will scan reliably on all devices.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </div>
+      <QRGenerator isDynamic={true} />
     </div>
   );
 }
