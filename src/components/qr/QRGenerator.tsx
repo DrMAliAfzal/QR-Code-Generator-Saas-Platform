@@ -132,6 +132,33 @@ export default function QRGenerator({
 
   const handleDownload = () => {
     if (!qrCodeStyling) return;
+    
+    // Check free limit
+    const limitKey = 'smart_qr_usage';
+    let usage = { week_start: Date.now(), counts: {} as Record<string, number> };
+    try {
+      const stored = localStorage.getItem(limitKey);
+      if (stored) {
+        usage = JSON.parse(stored);
+      }
+    } catch (e) {}
+
+    // Reset if 7 days passed
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() - usage.week_start > SEVEN_DAYS) {
+      usage = { week_start: Date.now(), counts: {} };
+    }
+
+    const count = usage.counts[activeTab] || 0;
+    if (count >= 5) {
+      alert(`You have reached your weekly limit of 5 free downloads for this QR type. Please upgrade to Pro or try again next week!`);
+      return;
+    }
+
+    // Increment count
+    usage.counts[activeTab] = count + 1;
+    localStorage.setItem(limitKey, JSON.stringify(usage));
+
     qrCodeStyling.download({ name: 'Smart-QR-Studio', extension: 'png' });
   };
 
