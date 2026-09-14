@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Check, QrCode } from "lucide-react";
 import Link from "next/link";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function PricingPage() {
   const plans = [
@@ -62,23 +64,7 @@ export default function PricingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="bg-indigo-600 p-2 rounded-lg">
-              <QrCode className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight">Smart QR Studio</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/blog" className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">Blog</Link>
-            <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">Log in</Link>
-            <Link href="/signup">
-              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6">Sign up</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 py-20">
         <div className="container mx-auto px-4 max-w-6xl">
@@ -127,11 +113,7 @@ export default function PricingPage() {
           </div>
         </div>
       </main>
-      <footer className="py-8 bg-white border-t border-slate-200 mt-20">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-500">&copy; 2026 Smart QR Studio by Al-Afzal Solutions. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

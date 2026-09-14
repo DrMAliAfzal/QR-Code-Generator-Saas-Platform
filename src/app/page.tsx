@@ -1,4 +1,6 @@
 ﻿import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import QRGenerator from '@/components/qr/QRGenerator';
 import { Shield, Zap, Palette, BarChart3, Edit3, Lock, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,20 +47,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b py-4 px-6 md:px-12 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">Q</span>
-          </div>
-          <div className="font-bold text-xl text-slate-900 tracking-tight">Smart QR Studio</div>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">Log in</Link>
-          <Link href="/signup">
-            <Button className="bg-slate-900 text-white hover:bg-slate-800 shadow-sm">Get Started</Button>
-          </Link>
-        </div>
-      </header>
+      <Header />
         <style dangerouslySetInnerHTML={{ __html: 'details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }' }} />
       
       <main className="flex-1">
@@ -276,23 +265,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t py-12 px-4">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-slate-900 rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-xs">Q</span>
-            </div>
-            <div className="font-bold text-lg text-slate-900 tracking-tight">Smart QR Studio</div>
-          </div>
-          <p className="text-slate-500 text-sm text-center md:text-left">
-            © {new Date().getFullYear()} Smart QR Studio. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <Link href="/privacy-policy" className="text-sm text-slate-500 hover:text-slate-900">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="text-sm text-slate-500 hover:text-slate-900">Terms of Service</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

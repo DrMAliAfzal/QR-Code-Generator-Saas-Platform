@@ -1,4 +1,6 @@
 ﻿import Link from "next/link";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { ArrowLeft, FileText, AlertTriangle, Scale } from "lucide-react";
 
 export const metadata = {
@@ -10,18 +12,7 @@ export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 pb-24">
       {/* Premium Minimalist Header */}
-      <header className="bg-white border-b py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
-        <Link href="/" className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="font-medium text-sm">Back to Home</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-slate-900 rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-xs">Q</span>
-          </div>
-          <div className="font-bold text-lg text-slate-900 tracking-tight">Smart QR Studio</div>
-        </div>
-      </header>
+      <Header />
 
       <main className="max-w-3xl mx-auto px-4 pt-16">
         <div className="text-center mb-12">
