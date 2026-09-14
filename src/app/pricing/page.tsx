@@ -25,7 +25,7 @@ export default function PricingPage() {
     },
     {
       name: "Pro",
-      price: "$9",
+      price: "$5",
       description: "For professionals needing reliable tracking.",
       features: [
         "100 Dynamic QR Codes",
@@ -40,7 +40,7 @@ export default function PricingPage() {
     },
     {
       name: "Business",
-      price: "$39",
+      price: "$8",
       description: "For teams and growing businesses.",
       features: [
         "1,000 Dynamic QR Codes",
@@ -77,7 +77,7 @@ export default function PricingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {plans.map((plan) => (
-              <Card key={plan.name} className={`relative flex flex-col ${plan.popular ? 'border-indigo-600 shadow-xl scale-105 z-10' : 'border-slate-200'}`}>
+              <Card key={plan.name} className={`relative flex flex-col !overflow-visible transition-all duration-300 hover:shadow-[0_0_40px_-10px_rgba(79,70,229,0.4)] hover:-translate-y-2 bg-white ${plan.popular ? 'border-indigo-600 shadow-xl scale-105 z-10' : 'border-slate-200 hover:border-indigo-300'}`}>
                 {plan.popular && (
                   <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <span className="bg-indigo-600 text-white text-xs font-bold uppercase py-1 px-3 rounded-full">Most Popular</span>
