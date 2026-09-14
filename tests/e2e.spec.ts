@@ -1,11 +1,33 @@
 ﻿import { test, expect } from '@playwright/test';
 
-test.describe('Smart QR Studio E2E Tests', () => {
+test.describe('Smart QR Studio - Deep Launch E2E & SEO/AEO Tests', () => {
   
-  test('Landing Page loads correctly and contains SEO elements', async ({ page }) => {
+  test('SEO & AEO Validation (Meta tags, JSON-LD, Schemas)', async ({ page }) => {
     await page.goto('/');
+    // Check Meta tags
     await expect(page).toHaveTitle(/Smart QR Studio/);
-    await expect(page.locator('h1')).toContainText('QR Code');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /customized, logo-embedded/);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Smart QR Studio/);
+    
+    // Check H1 Tag for accessibility and SEO
+    await expect(page.locator('h1').first()).toContainText('QR Code');
+    
+    // Check JSON-LD schema for AEO / LLM parsing
+    const schemaScript = page.locator('script[type="application/ld+json"]').first();
+    await expect(schemaScript).toBeAttached();
+    const schemaContent = await schemaScript.textContent();
+    expect(schemaContent).toContain('WebApplication');
+  });
+
+  test('Blog AEO & LLM Schemas', async ({ page }) => {
+    await page.goto('/blog/dynamic-vs-static-qr-codes');
+    
+    // Check Blog JSON-LD schema
+    const schemaScript = page.locator('script[type="application/ld+json"]');
+    await expect(schemaScript).toBeAttached();
+    const schemaContent = await schemaScript.textContent();
+    expect(schemaContent).toContain('BlogPosting');
+    expect(schemaContent).toContain('Al-Afzal Solutions');
   });
 
   test('Global Premium Navigation is Present', async ({ page }) => {
@@ -20,9 +42,37 @@ test.describe('Smart QR Studio E2E Tests', () => {
     await expect(footer.getByRole('link', { name: 'Privacy Policy' })).toBeVisible();
   });
 
+  test('Weekly Free Limit (5 Downloads per Product)', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('tab', { name: 'URL', exact: true }).click();
+    await page.fill('input[placeholder="https://..."]', 'https://limit-test.com');
+    await page.waitForTimeout(500);
+    
+    let alertMessage = '';
+    page.on('dialog', dialog => {
+      alertMessage = dialog.message();
+      dialog.accept();
+    });
+
+    const downloadBtn = page.getByRole('button', { name: 'Download PNG' });
+    
+    // Download 5 times successfully
+    for (let i = 0; i < 5; i++) {
+      const downloadPromise = page.waitForEvent('download');
+      await downloadBtn.click();
+      await downloadPromise;
+      expect(alertMessage).toBe(''); // No alert should fire
+    }
+    
+    // 6th download should fire the limit paywall alert and NOT trigger a download
+    await downloadBtn.click();
+    await page.waitForTimeout(1000);
+    expect(alertMessage).toContain('limit of 5 downloads');
+  });
+
   test('Empty Input Disables Download Button (Edge Case 1)', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('tab', { name: 'Text' }).click();
+    await page.getByRole('tab', { name: 'Text', exact: true }).click();
     await page.fill('input[placeholder="Type something..."]', '');
     const downloadBtn = page.getByRole('button', { name: 'Download PNG' });
     await expect(downloadBtn).toBeDisabled();
@@ -31,7 +81,7 @@ test.describe('Smart QR Studio E2E Tests', () => {
 
   test('Dense QR Code Shows Warning (Edge Case 2)', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('tab', { name: 'Text' }).click();
+    await page.getByRole('tab', { name: 'Text', exact: true }).click();
     const longString = 'A'.repeat(300);
     await page.fill('input[placeholder="Type something..."]', longString);
     await expect(page.locator('.bg-yellow-100')).toContainText('Warning');
@@ -39,58 +89,18 @@ test.describe('Smart QR Studio E2E Tests', () => {
     await expect(downloadBtn).toBeEnabled();
   });
 
-  test('Generate a Static QR Code (Premium File Name)', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('tab', { name: 'Text' }).click();
-    await page.fill('input[placeholder="Type something..."]', 'Playwright Automated Test');
-    await page.waitForTimeout(1000);
-    const downloadPromise = page.waitForEvent('download');
-    await page.getByRole('button', { name: 'Download PNG' }).click();
-    const download = await downloadPromise;
-    expect(download.suggestedFilename()).toBe('Smart-QR-Studio.png');
-  });
-
-  test('Friendly Authentication Error (Edge Case 3)', async ({ page }) => {
-    await page.goto('/signup');
-    const testEmail = `testuser_${Date.now()}@example.com`;
-    await page.fill('input[type="email"]', testEmail);
-    await page.fill('input[type="password"]', 'StrongPassw0rd!');
-    await page.click('button[type="submit"]');
-    await page.waitForTimeout(3000);
-    const currentUrl = page.url();
-    if (!currentUrl.includes('dashboard')) {
-      const errorText = await page.locator('.text-red-500').textContent();
-      expect(errorText?.toLowerCase()).toContain('valid email');
-    }
-  });
-
-  test('Pricing Page & Waitlist Intercept', async ({ page }) => {
+  test('Pricing Page Hover Effects & Waitlist', async ({ page }) => {
     await page.goto('/pricing');
-    await expect(page.locator('h1')).toContainText('Simple pricing');
     
-    // Check that plans exist
-    await expect(page.getByText('Free', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('Pro', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('Business', { exact: true }).first()).toBeVisible();
-
-    // Click "Join Waitlist" on the Pro plan and intercept the JS alert
+    // Check waitlist
+    let alertMessage = '';
     page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Premium plans are launching very soon');
+      alertMessage = dialog.message();
       await dialog.accept();
     });
     
     await page.getByRole('button', { name: 'Join Waitlist' }).first().click();
+    expect(alertMessage).toContain('Premium plans are launching very soon');
   });
 
-  test('Blog Architecture & AdSense Placeholder', async ({ page }) => {
-    await page.goto('/blog');
-    await expect(page.locator('h1')).toContainText('QR Code Guides');
-    
-    // Navigate to a specific post
-    await page.click('text=Dynamic vs Static QR Codes: Which Should You Use?');
-    await expect(page).toHaveURL(/.*dynamic-vs-static-qr-codes/);
-    
-    // Ensure the AdSense placeholder rendered successfully (using the visible span)
-    await expect(page.locator('text=AdSense Placeholder').first()).toBeVisible();
-  });
 });

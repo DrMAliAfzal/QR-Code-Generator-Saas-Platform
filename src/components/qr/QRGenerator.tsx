@@ -151,7 +151,21 @@ export default function QRGenerator({
 
     const count = usage.counts[activeTab] || 0;
     if (count >= 5) {
-      alert(`You have reached your weekly limit of 5 free downloads for this QR type. Please upgrade to Pro or try again next week!`);
+      const timeRemaining = (usage.week_start + SEVEN_DAYS) - Date.now();
+      const daysLeft = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hoursLeft = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const timeString = daysLeft > 0 ? `${daysLeft} days and ${hoursLeft} hours` : `${hoursLeft} hours`;
+      
+      const wantsPro = window.confirm(`You have reached your free weekly limit of 5 downloads for this tool.
+
+⏱️ Your limit will reset in ${timeString}.
+🚀 Want unlimited downloads? You can shift to our Pro plan today!
+
+Click OK to view our Premium Plans.`);
+      
+      if (wantsPro) {
+        window.location.href = '/pricing';
+      }
       return;
     }
 
