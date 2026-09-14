@@ -45,6 +45,19 @@ export default function QRGenerator({
   const [qrCodeStyling, setQrCodeStyling] = useState<any>(null);
   const [safetyScore, setSafetyScore] = useState<'Excellent' | 'Warning' | 'Unsafe'>('Excellent');
   const [safetyIssues, setSafetyIssues] = useState<string[]>([]);
+  
+  // WhatsApp State
+  const [waPhone, setWaPhone] = useState('');
+  const [waText, setWaText] = useState('');
+  
+  // vCard State
+  const [vcName, setVcName] = useState('');
+  const [vcPhone, setVcPhone] = useState('');
+  const [vcEmail, setVcEmail] = useState('');
+  const [vcOrg, setVcOrg] = useState('');
+  const [vcTitle, setVcTitle] = useState('');
+  const [vcUrl, setVcUrl] = useState('');
+
 
   useEffect(() => {
     import('qr-code-styling').then((module) => {
@@ -67,6 +80,8 @@ export default function QRGenerator({
       case 'url': return url;
       case 'text': return text;
       case 'wifi': return formatWifi(wifiSsid, wifiPass);
+      case 'whatsapp': return formatWhatsApp(waPhone, waText);
+      case 'vcard': return formatVCard({ name: vcName, phone: vcPhone, email: vcEmail, org: vcOrg, title: vcTitle, url: vcUrl });
       default: return url;
     }
   };
@@ -201,6 +216,8 @@ mode: qrMode
                     <TabsTrigger value="url" className="border rounded-md px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">URL</TabsTrigger>
                     <TabsTrigger value="text" className="border rounded-md px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Text</TabsTrigger>
                     <TabsTrigger value="wifi" className="border rounded-md px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Wi-Fi</TabsTrigger>
+                      <TabsTrigger value="whatsapp" className="border rounded-md px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">WhatsApp</TabsTrigger>
+                      <TabsTrigger value="vcard" className="border rounded-md px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">vCard</TabsTrigger>
                   </TabsList>
                   
                   <div className="mt-6 border-t pt-4">

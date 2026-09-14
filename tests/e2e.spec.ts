@@ -8,6 +8,18 @@ test.describe('Smart QR Studio E2E Tests', () => {
     await expect(page.locator('h1')).toContainText('QR Code');
   });
 
+  test('Global Premium Navigation is Present', async ({ page }) => {
+    await page.goto('/');
+    // Check if header contains Pricing and Blog links
+    await expect(page.locator('header').getByRole('link', { name: 'Pricing' })).toBeVisible();
+    await expect(page.locator('header').getByRole('link', { name: 'Blog' })).toBeVisible();
+    
+    // Check footer links
+    const footer = page.locator('footer');
+    await expect(footer.getByRole('link', { name: 'URL QR Code' })).toBeVisible();
+    await expect(footer.getByRole('link', { name: 'Privacy Policy' })).toBeVisible();
+  });
+
   test('Empty Input Disables Download Button (Edge Case 1)', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('tab', { name: 'Text' }).click();

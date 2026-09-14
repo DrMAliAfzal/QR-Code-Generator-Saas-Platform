@@ -17,7 +17,7 @@ export default function VCardQrCodePage() {
           <h1 className="text-4xl font-extrabold tracking-tight mb-4 text-slate-900">vCard QR Code Generator</h1>
           <p className="text-lg text-slate-600">Share your contact details instantly with a single scan.</p>
         </div>
-        <QRGenerator defaultTab="url" /> 
+        <QRGenerator defaultTab="vcard" /> 
         {/* Placeholder for now, wait, we don't have a vCard tab yet in QRGenerator, I'll update it later */}
       </main>
       <Footer />

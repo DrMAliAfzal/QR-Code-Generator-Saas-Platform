@@ -17,7 +17,7 @@ export default function WhatsAppQrCodePage() {
           <h1 className="text-4xl font-extrabold tracking-tight mb-4 text-slate-900">WhatsApp QR Code Generator</h1>
           <p className="text-lg text-slate-600">Let customers chat with you instantly by scanning a code.</p>
         </div>
-        <QRGenerator defaultTab="url" />
+        <QRGenerator defaultTab="whatsapp" />
       </main>
       <Footer />
     </div>
