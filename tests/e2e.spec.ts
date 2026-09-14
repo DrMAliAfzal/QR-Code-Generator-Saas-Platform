@@ -48,12 +48,6 @@ test.describe('Smart QR Studio - Deep Launch E2E & SEO/AEO Tests', () => {
     await page.fill('input[placeholder="https://..."]', 'https://limit-test.com');
     await page.waitForTimeout(500);
     
-    let alertMessage = '';
-    page.on('dialog', dialog => {
-      alertMessage = dialog.message();
-      dialog.accept();
-    });
-
     const downloadBtn = page.getByRole('button', { name: 'Download PNG' });
     
     // Download 5 times successfully
@@ -61,13 +55,14 @@ test.describe('Smart QR Studio - Deep Launch E2E & SEO/AEO Tests', () => {
       const downloadPromise = page.waitForEvent('download');
       await downloadBtn.click();
       await downloadPromise;
-      expect(alertMessage).toBe(''); // No alert should fire
+      await expect(page.locator('text=Limit Reached')).toBeHidden();
     }
     
-    // 6th download should fire the limit paywall alert and NOT trigger a download
+    // 6th download should trigger the DOM modal
     await downloadBtn.click();
     await page.waitForTimeout(1000);
-    expect(alertMessage).toContain('limit of 5 downloads');
+    await expect(page.locator('text=Limit Reached').first()).toBeVisible();
+    await expect(page.locator('text=limit of 5 downloads').first()).toBeVisible();
   });
 
   test('Empty Input Disables Download Button (Edge Case 1)', async ({ page }) => {
